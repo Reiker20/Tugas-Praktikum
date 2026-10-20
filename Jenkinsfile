@@ -23,14 +23,11 @@ pipeline {
                 echo "Mempersiapkan pengujian lingkungan aplikasi dan koneksi basis data..."
             }
         }
-        
+
         stage('Build Docker Image') {
             steps {
-                script {
-                    // Membangun Docker Image dengan tag nomor build Jenkins
-                    echo "Mulai proses build Docker Image..."
-                    docker.build("${IMAGE_NAME}:${env.BUILD_NUMBER}")
-                }
+                echo "Mulai proses build Docker Image..."
+                bat "docker build -t %IMAGE_NAME%:%BUILD_NUMBER% ."
             }
         }
         
