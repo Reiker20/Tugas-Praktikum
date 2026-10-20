@@ -2,14 +2,14 @@ pipeline {
     agent any
     
     environment {
-        IMAGE_NAME = 'Reiker20/Tugas-Praktikum'
+        // PERUBAHAN: Ubah nama repository menjadi huruf kecil semua
+        IMAGE_NAME = 'reiker20/tugas-praktikum'
         REGISTRY_CREDENTIALS = 'dockerhub-credentials'
     }
     
     stages {
         stage('Checkout') {
             steps {
-                // Mengambil kode sumber dari repositori GitHub
                 checkout scm
                 echo "Berhasil mengambil kode dari GitHub."
             }
@@ -17,7 +17,6 @@ pipeline {
         
         stage('Build Database & App') {
             steps {
-                // Menjalankan proses persiapan dan pengujian basis data
                 echo "Mempersiapkan pengujian lingkungan aplikasi dan koneksi basis data..."
             }
         }
@@ -31,15 +30,12 @@ pipeline {
         
         stage('Push Docker Image') {
             steps {
-                echo "Mengunggah Docker Image ke Docker Hub azskiees..."
+                echo "Mengunggah Docker Image ke Docker Hub..."
                 withCredentials([usernamePassword(credentialsId: REGISTRY_CREDENTIALS, 
                     usernameVariable: 'USER', passwordVariable: 'PASS')]) {
                     
-                    // Login ke Docker Hub menggunakan kredensial
                     bat 'docker login -u %USER% -p %PASS%'
                     bat "docker push %IMAGE_NAME%:%BUILD_NUMBER%"
-                    
-                    // Tag dan push image sebagai 'latest'
                     bat "docker tag %IMAGE_NAME%:%BUILD_NUMBER% %IMAGE_NAME%:latest"
                     bat "docker push %IMAGE_NAME%:latest"
                 }
@@ -52,7 +48,7 @@ pipeline {
             echo "Seluruh tahapan pipeline Jenkins telah selesai dieksekusi."
         }
         success {
-            echo "Build dan Push Docker Image ke Docker Hub azskiees BERHASIL!"
+            echo "Build dan Push Docker Image BERHASIL!"
         }
         failure {
             echo "Terjadi kesalahan saat menjalankan pipeline."
