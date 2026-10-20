@@ -3,7 +3,7 @@ pipeline {
     
     environment {
         // PERUBAHAN: Ubah nama repository menjadi huruf kecil semua
-        IMAGE_NAME = 'reiker20/tugas-praktikum'
+        IMAGE_NAME = 'reikaelvaretta/tugas-praktikum'
         REGISTRY_CREDENTIALS = 'dockerhub-credentials'
     }
     
