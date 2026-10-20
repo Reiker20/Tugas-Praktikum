@@ -2,9 +2,7 @@ pipeline {
     agent any
     
     environment {
-        // Menggunakan username Docker Hub: azskiees
-        IMAGE_NAME = 'azskiees/tugas-komputasi-awan'
-        // ID Kredensial yang didaftarkan di Manage Credentials Jenkins
+        IMAGE_NAME = 'Reiker20/Tugas-Praktikum'
         REGISTRY_CREDENTIALS = 'dockerhub-credentials'
     }
     
@@ -33,16 +31,17 @@ pipeline {
         
         stage('Push Docker Image') {
             steps {
-                script {
-                    // Autentikasi dan push image ke akun Docker Hub azskiees
-                    echo "Mengunggah Docker Image ke Docker Hub azskiees..."
-                    docker.withRegistry('https://index.docker.io/v1/', REGISTRY_CREDENTIALS) {
-                        def tag = "${IMAGE_NAME}:${env.BUILD_NUMBER}"
-                        // Push dengan tag sesuai nomor build (contoh: azskiees/tugas-komputasi-awan:1)
-                        docker.image(tag).push()
-                        // Push dengan tag latest (azskiees/tugas-komputasi-awan:latest)
-                        docker.image(tag).push('latest')
-                    }
+                echo "Mengunggah Docker Image ke Docker Hub azskiees..."
+                withCredentials([usernamePassword(credentialsId: REGISTRY_CREDENTIALS, 
+                    usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                    
+                    // Login ke Docker Hub menggunakan kredensial
+                    bat 'docker login -u %USER% -p %PASS%'
+                    bat "docker push %IMAGE_NAME%:%BUILD_NUMBER%"
+                    
+                    // Tag dan push image sebagai 'latest'
+                    bat "docker tag %IMAGE_NAME%:%BUILD_NUMBER% %IMAGE_NAME%:latest"
+                    bat "docker push %IMAGE_NAME%:latest"
                 }
             }
         }
